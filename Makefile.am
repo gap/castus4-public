@@ -22,14 +22,15 @@ schedfilter_PROGRAMS = \
     autochop1
 
 noinst_PROGRAMS = \
+    filter-example-check-duration \
+    filter-example-check-duration-and-ripple \
+    filter-example-check-duration-and-ripple-bidi \
+    filter-update-event \
     loadschedule \
     lintschedule \
     lintschedule2 \
     lintschedule3 \
-    showmeta \
-	filter-example-check-duration \
-	filter-example-check-duration-and-ripple \
-	filter-example-check-duration-and-ripple-bidi
+    showmeta
 
 instfilter_PROGRAMS = \
 	filter-example-check-duration \
@@ -56,6 +57,9 @@ filter_example_check_duration_and_ripple_LDADD = libcastus4-public.la
 
 filter_example_check_duration_and_ripple_bidi_SOURCES = filter-example-check-duration-and-ripple-bidi.cpp utils.cpp utils_schedule.cpp
 filter_example_check_duration_and_ripple_bidi_LDADD = libcastus4-public.la
+
+filter_update_event_SOURCES = filter-update-event.cpp utils.cpp utils_schedule.cpp
+filter_update_event_LDADD = libcastus4-public.la
 
 castus4_public_demo_parsetime_SOURCES = src/bin/parsetime.cpp
 castus4_public_demo_parsetime_LDADD = libcastus4-public.la

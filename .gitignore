@@ -60,6 +60,7 @@ castus4-public_demo_parsetime
 filter-example-check-duration
 filter-example-check-duration-and-ripple
 filter-example-check-duration-and-ripple-bidi
+filter-update-event
 lintschedule
 lintschedule2
 lintschedule3
