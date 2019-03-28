@@ -1,7 +1,8 @@
 
-ACLOCAL_AMFLAGS = -I m4 
-AM_CPPFLAGS = -I$(top_srcdir)/include -std=c++11 
+ACLOCAL_AMFLAGS = -I m4
+AM_CPPFLAGS = -I$(top_srcdir)/include -std=c++11
 
+instfilterdir = $(datarootdir)/castus4/filterscripts
 pkgconfiglibdir = $(libdir)/pkgconfig
 # This REALLY should be based in libexec!
 schedfilterdir = /mnt/main/tv/schedule-filters
@@ -24,7 +25,15 @@ noinst_PROGRAMS = \
     lintschedule \
     lintschedule2 \
     lintschedule3 \
-    showmeta
+    showmeta \
+	filter-example-check-duration \
+	filter-example-check-duration-and-ripple \
+	filter-example-check-duration-and-ripple-bidi
+
+instfilter_PROGRAMS = \
+	filter-example-check-duration \
+	filter-example-check-duration-and-ripple \
+	filter-example-check-duration-and-ripple-bidi
 
 pkgconfiglib_DATA = \
 	castus4-public.pc
@@ -37,6 +46,15 @@ libcastus4_public_la_SOURCES = \
     src/lib/schedule_object.cpp \
     src/lib/schedule_helpers.cpp \
     src/lib/c_schedule.cpp
+
+filter_example_check_duration_SOURCES = filter-example-check-duration.cpp utils.cpp utils_schedule.cpp
+filter_example_check_duration_LDADD = libcastus4-public.la
+
+filter_example_check_duration_and_ripple_SOURCES = filter-example-check-duration-and-ripple.cpp utils.cpp utils_schedule.cpp
+filter_example_check_duration_and_ripple_LDADD = libcastus4-public.la
+
+filter_example_check_duration_and_ripple_bidi_SOURCES = filter-example-check-duration-and-ripple-bidi.cpp utils.cpp utils_schedule.cpp
+filter_example_check_duration_and_ripple_bidi_LDADD = libcastus4-public.la
 
 castus4_public_demo_parsetime_SOURCES = src/bin/parsetime.cpp
 castus4_public_demo_parsetime_LDADD = libcastus4-public.la
@@ -61,3 +79,10 @@ lintschedule3_LDADD = libcastus4-public.la
 
 showmeta_SOURCES = src/bin/showmeta.cpp
 showmeta_LDADD = libcastus4-public.la
+
+install-data-hook:
+	(cd $(DESTDIR)$(instfilterdir) && rm -vf 'Check durations and ripple up or down')
+	(cd $(DESTDIR)$(instfilterdir) && mv -vf 'filter-example-check-duration' 'Check durations and match')
+	(cd $(DESTDIR)$(instfilterdir) && mv -vf 'filter-example-check-duration-and-ripple' 'Check durations and ripple down')
+	(cd $(DESTDIR)$(instfilterdir) && mv -vf 'filter-example-check-duration-and-ripple-bidi' 'Check durations and ripple up and down')
+
