@@ -17,29 +17,36 @@ int main() {
     struct timespec current_time;
     clock_gettime(CLOCK_REALTIME, &current_time);
 
-    Castus4publicSchedule::ideal_time_t sched_offset = 0;
+    // How far into the schedule we are (predeclared due to initialization within a conditional)
+    Castus4publicSchedule::ideal_time_t sched_offset;
 
-    if (schedule.schedule_type == C4_SCHED_TYPE_DAILY) {
-        struct tm cal;
-        localtime_r(&current_time.tv_sec, &cal);
-        // Clear the date components because we only care about the time side
-        cal.tm_year = cal.tm_mon = cal.tm_mday = 0;
-        // Convert back to seconds, and make it compatible with CASTUS' time format
-        sched_offset = (Castus4publicSchedule::ideal_time_t)mktime(&cal) * Castus4publicSchedule::ideal_microsec_per_sec;
-    } else {
-        // Only daily schedules are supported currently
-        return 1;
+    switch (schedule.schedule_type) {
+        case C4_SCHED_TYPE_DAILY:
+            struct tm cal;
+            localtime_r(&current_time.tv_sec, &cal);
+            // Clear the date components because we only care about the time side
+            cal.tm_year = cal.tm_mon = cal.tm_mday = 0;
+            // Convert back to seconds, and make it compatible with CASTUS' time format
+            sched_offset = (Castus4publicSchedule::ideal_time_t)mktime(&cal) * Castus4publicSchedule::ideal_microsec_per_sec;
+            break;
+        default:
+            // Only daily schedules are supported currently
+            return 1;
     }
 
-    // Step 2: Iterate through blocks until we find one whose start..end range contains that time
+    // Step 2: Find the first block whose start..end range contains that time
     auto result = find_if(schedule.schedule_blocks.begin(), schedule.schedule_blocks.end(), [sched_offset](Castus4publicSchedule::ScheduleBlock& block) {
         return (block.getStartTime() <= sched_offset && block.getEndTime() >= sched_offset);
     });
 
+    // If no matching blocks exist, our work is done; however, since the user
+    // triggered us, this is likely an error. Note that errors are not reported:
+    // returning an error code simply causes the schedule to not reload.
     if (result == schedule.schedule_blocks.end()) {
-        return 0;
+        return 2;
     }
 
+    // Bind the block to a reference to tidy up the remaining code
     auto& block = *result;
 
     // Step 3: Calculate how far into the block we are
@@ -47,7 +54,12 @@ int main() {
 
     // Step 4.1: Move the targeted items down by the difference between the block's start and the current time
     for (auto& item : schedule.schedule_items) {
-        if (is_valid(item) && in_block(item, block)) {
+        if (is_valid(item) && in_block(item, block) &&
+            // All well-formed triggered items will start at the top of the block
+            item.getStartTime() == block.getStartTime() &&
+            // All well-formed triggered items will have zero duration
+            item.getStartTime() == item.getEndTime()) {
+
             item.setStartTime(item.getStartTime() + time_offset);
             item.setEndTime(  item.getEndTime()   + time_offset);
         }
@@ -76,6 +88,7 @@ int main() {
         if (is_valid(current) && in_block(current, block) &&
             is_valid(next)    && in_block(next,    block)) {
 
+            // Shift the `next` item down to no longer overlap with `current`
             ripple_one(current, next);
 
             // Step 4.4: Truncate anything that has been pushed past the end of the block
