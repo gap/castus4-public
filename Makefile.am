@@ -26,6 +26,7 @@ noinst_PROGRAMS = \
     filter-example-check-duration-and-ripple \
     filter-example-check-duration-and-ripple-bidi \
     filter-update-event \
+    filter-update-yearly-triggers \
     loadschedule \
     lintschedule \
     lintschedule2 \
@@ -60,6 +61,9 @@ filter_example_check_duration_and_ripple_bidi_LDADD = libcastus4-public.la
 
 filter_update_event_SOURCES = filter-update-event.cpp utils.cpp utils_schedule.cpp
 filter_update_event_LDADD = libcastus4-public.la -lboost_filesystem -lboost_system
+
+filter_update_yearly_triggers_SOURCES = filter-update-yearly-triggers.cpp utils.cpp utils_schedule.cpp
+filter_update_yearly_triggers_LDADD = libcastus4-public.la -lboost_filesystem -lboost_system
 
 castus4_public_demo_parsetime_SOURCES = src/bin/parsetime.cpp
 castus4_public_demo_parsetime_LDADD = libcastus4-public.la
