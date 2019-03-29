@@ -59,7 +59,7 @@ filter_example_check_duration_and_ripple_bidi_SOURCES = filter-example-check-dur
 filter_example_check_duration_and_ripple_bidi_LDADD = libcastus4-public.la
 
 filter_update_event_SOURCES = filter-update-event.cpp utils.cpp utils_schedule.cpp
-filter_update_event_LDADD = libcastus4-public.la
+filter_update_event_LDADD = libcastus4-public.la -lboost_filesystem -lboost_system
 
 castus4_public_demo_parsetime_SOURCES = src/bin/parsetime.cpp
 castus4_public_demo_parsetime_LDADD = libcastus4-public.la
