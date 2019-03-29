@@ -16,7 +16,7 @@ using Sched = Castus4publicSchedule;
 using ideal_time_t = Sched::ideal_time_t;
 
 int main(int argc, char** argv) {
-	Sched schedule;
+    Sched schedule;
     load(schedule);
 
     // Step 1: Get the current time
@@ -160,5 +160,5 @@ int main(int argc, char** argv) {
 
     write(schedule);
 
-	return 0;
+    return 0;
 }
