@@ -8,6 +8,7 @@ pkgconfiglibdir = $(libdir)/pkgconfig
 # This REALLY should be based in libexec!
 schedfilterdir = /mnt/main/tv/schedule-filters
 castusheaderdir = $(includedir)/castus4-public
+systemfilterdir = $(libexecdir)/castus/schedule-filters
 
 lib_LTLIBRARIES = \
     libcastus4-public.la
@@ -21,12 +22,14 @@ bin_PROGRAMS = \
 schedfilter_PROGRAMS = \
     autochop1
 
+systemfilter_PROGRAMS = \
+    filter-update-event \
+    filter-update-yearly-triggers
+
 noinst_PROGRAMS = \
     filter-example-check-duration \
     filter-example-check-duration-and-ripple \
     filter-example-check-duration-and-ripple-bidi \
-    filter-update-event \
-    filter-update-yearly-triggers \
     loadschedule \
     lintschedule \
     lintschedule2 \

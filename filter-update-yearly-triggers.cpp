@@ -36,7 +36,8 @@ fs::path create_daily_schedule(fs::path day_dir) {
 
         ideal_time_t last_block = schedule.schedule_blocks.empty() ? 0 : schedule.schedule_blocks.back().getEndTime();
         block.setStartTime(last_block);
-        block.setEndTime(last_block + Sched::ideal_day);
+        block.setEndTime(last_block + Sched::ideal_hour);
+
         block.setValue("trigger", "charter_event");
         schedule.schedule_blocks.push_back(block);
 
