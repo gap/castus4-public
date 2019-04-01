@@ -84,7 +84,7 @@ int main(int argc, char** argv) {
     transform(
         fs::directory_iterator(base),
         fs::directory_iterator(),
-        files.begin(),
+        back_inserter(files),
         [](fs::directory_entry& entry){ return entry.path(); }
     );
     // Remove anything that isn't a non-hidden m2ts
