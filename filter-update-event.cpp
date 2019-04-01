@@ -46,8 +46,8 @@ int main(int argc, char** argv) {
     auto result = find_if(schedule.schedule_blocks.begin(), schedule.schedule_blocks.end(), [sched_offset](Sched::ScheduleBlock& block) {
         return (
             block.getStartTime() <= sched_offset &&
-            block.getEndTime()   >= sched_offset &&
-            string(block.getValue("trigger")) == "charter_event"
+            block.getEndTime()   >  sched_offset &&
+            block.getValue("trigger") && string(block.getValue("trigger")) == "charter_event"
         );
     });
 
@@ -117,7 +117,7 @@ int main(int argc, char** argv) {
 
     // Step 4.2: Correct the targeted items' durations
     for (auto& item : schedule.schedule_items) {
-        if (is_valid(item) && string(item.getValue("trigger")) == "charter_event") {
+        if (is_valid(item) && item.getValue("trigger") && string(item.getValue("trigger")) == "charter_event") {
             // Update the duration information
             update_timing(item);
         }
@@ -135,8 +135,8 @@ int main(int argc, char** argv) {
         // Bind the current item
         auto& current = *tmp;
 
-        if (is_valid(current) && string(current.getValue("trigger")) == "charter_event" &&
-            is_valid(next)    && string(   next.getValue("trigger")) == "charter_event") {
+        if (is_valid(current) && current.getValue("trigger") && string(current.getValue("trigger")) == "charter_event" &&
+            is_valid(next)    &&    next.getValue("trigger") && string(   next.getValue("trigger")) == "charter_event") {
 
             // Shift the `next` item down to no longer overlap with `current`
             ripple_one(current, next);
