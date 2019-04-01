@@ -112,6 +112,7 @@ int main(int argc, char** argv) {
         bias += Sched::ideal_microsecond;
         item.setEndTime(  sched_offset + bias);
         item.setValue("trigger", "charter_event");
+        schedule.schedule_items.push_back(item);
     }
 
     // Step 4.2: Correct the targeted items' durations
