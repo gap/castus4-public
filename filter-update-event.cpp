@@ -88,7 +88,7 @@ int main(int argc, char** argv) {
         [](fs::directory_entry& entry){ return entry.path(); }
     );
     // Remove anything that isn't a non-hidden m2ts
-    remove_if(files.begin(), files.end(), [](fs::path& path){
+    auto end = remove_if(files.begin(), files.end(), [](fs::path& path){
         if (path.extension() != "m2ts") {
             return true;
         } else if (path.leaf().string().substr(0, 1) == ".") {
@@ -97,6 +97,7 @@ int main(int argc, char** argv) {
             return false;
         }
     });
+    files.erase(end, files.end());
     // Sort them
     sort(files.begin(), files.end());
 
