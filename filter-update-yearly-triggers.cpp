@@ -16,6 +16,12 @@ using Sched = Castus4publicSchedule;
 using ideal_time_t = Castus4publicSchedule::ideal_time_t;
 
 fs::path create_daily_schedule(fs::path day_dir) {
+    const fs::path file{day_dir / "Schedule"};
+
+    if (fs::exists(file)) {
+        return file;
+    }
+
     const vector<string> hours{
         "12am", "1am", "2am", "3am",  "4am",  "5am",
          "6am", "7am", "8am", "9am", "10am", "11am",
@@ -60,7 +66,7 @@ fs::path create_daily_schedule(fs::path day_dir) {
         cerr << "Error while writing schedule " << (day_dir / "Schedule") << endl;
     }
 
-    return day_dir / "Schedule";
+    return file;
 }
 
 int main(int argc, char** argv) {
