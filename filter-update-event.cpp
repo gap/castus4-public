@@ -89,7 +89,7 @@ int main(int argc, char** argv) {
     );
     // Remove anything that isn't a non-hidden m2ts
     auto end = remove_if(files.begin(), files.end(), [](fs::path& path){
-        if (path.extension() != "m2ts") {
+        if (path.extension() != ".m2ts") {
             return true;
         } else if (path.leaf().string().substr(0, 1) == ".") {
             return true;
