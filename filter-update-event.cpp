@@ -101,6 +101,21 @@ int main(int argc, char** argv) {
     // Sort them
     sort(files.begin(), files.end());
 
+    // Add in the default items in cascading order
+    //        0        1     2    3
+    // $YEARLY Days/$year/$month/$day
+    auto default_base = base.parent_path();
+    // For each path prefix that is still within the yearly schedule's remit
+    for (int i = 3; i >= 0; --i) {
+        // If we have a default item at this scope
+        if (fs::exists(default_base / "Default.m2ts")) {
+            // Put it on the list to play
+            files.emplace_back(default_base / "Default.m2ts");
+        }
+        // And move up to the next-broader scope
+        default_base.remove_leaf();
+    }
+
     // Give each one a trivial duration, so that they have a clear
     // ordering when Jonathan's code sorts them
     ideal_time_t bias = 0;
