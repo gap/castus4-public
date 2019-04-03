@@ -138,7 +138,10 @@ int main(int argc, char** argv) {
         }
     }
 
-    // Step 4.3: Ripple the items
+    // Figure out five minutes past the event or the end of the block, whichever is sooner
+    auto trim_time = min(sched_offset + (5 * Sched::ideal_minute), block.getEndTime());
+
+    // Step 4.3: Ripple the items, killing off any that pass the five-minute or block-end boundary
     // Skip an item at the start (it will be manually visited)
     for (auto schedule_item = ++schedule.schedule_items.begin();
               schedule_item !=  schedule.schedule_items.end();
@@ -156,16 +159,16 @@ int main(int argc, char** argv) {
             // Shift the `next` item down to no longer overlap with `current`
             ripple_one(current, next);
 
-            // Step 4.4: Truncate anything that has been pushed past the end of the block
-            // If the item is now entirely outside the block
-            if (next.getStartTime() > block.getEndTime()) {
+            // Step 4.4: Truncate anything that has been pushed past the deadline
+            // If the item is now entirely outside the window
+            if (next.getStartTime() > trim_time) {
                 // Remove the item from the schedule entirely
                 // NOTE: This avoids iterator invalidation due to this being a linked list,
                 //       and so is safe to perform.
                 schedule.schedule_items.erase(++tmp);
-            } else if (next.getEndTime() > block.getEndTime()) {
+            } else if (next.getEndTime() > trim_time) {
                 // Cut the item's end point short
-                next.setEndTime(block.getEndTime());
+                next.setEndTime(trim_time);
             }
         }
     }
