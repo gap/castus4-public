@@ -161,19 +161,25 @@ int main(int argc, char** argv) {
 
             // Shift the `next` item down to no longer overlap with `current`
             ripple_one(current, next);
+        }
+    }
 
-            // Step 4.4: Truncate anything that has been pushed past the deadline
+    // Step 4.4: Truncate anything that has been pushed past the deadline
+    for (auto item = schedule.schedule_items.begin(); item != schedule.schedule_items.end(); /* advanced internally */) {
+        if (is_trigger_item(*item, "charter_event")) {
             // If the item is now entirely outside the window
-            if (next.getStartTime() > trim_time) {
+            if (item->getStartTime() >= trim_time) {
                 // Remove the item from the schedule entirely
                 // NOTE: This avoids iterator invalidation due to this being a linked list,
                 //       and so is safe to perform.
-                schedule.schedule_items.erase(++tmp);
-            } else if (next.getEndTime() > trim_time) {
+                item = schedule.schedule_items.erase(item);
+                continue;
+            } else if (item->getEndTime() > trim_time) {
                 // Cut the item's end point short
-                next.setEndTime(trim_time);
+                item->setEndTime(trim_time);
             }
         }
+        ++item;
     }
 
     // Clear out the trigger markers on old items
