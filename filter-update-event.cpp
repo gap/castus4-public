@@ -15,6 +15,10 @@ namespace fs = boost::filesystem;
 using Sched = Castus4publicSchedule;
 using ideal_time_t = Sched::ideal_time_t;
 
+bool is_trigger_item(Sched::ScheduleItem& item, string trigger) {
+    return (is_valid(item) && item.getValue("trigger") && string(item.getValue("trigger")) == trigger);
+}
+
 int main(int argc, char** argv) {
     Sched schedule;
     load(schedule);
@@ -132,7 +136,7 @@ int main(int argc, char** argv) {
 
     // Step 4.2: Correct the targeted items' durations
     for (auto& item : schedule.schedule_items) {
-        if (is_valid(item) && item.getValue("trigger") && string(item.getValue("trigger")) == "charter_event") {
+        if (is_trigger_item(item, "charter_event")) {
             // Update the duration information
             update_timing(item);
         }
@@ -153,8 +157,7 @@ int main(int argc, char** argv) {
         // Bind the current item
         auto& current = *tmp;
 
-        if (is_valid(current) && current.getValue("trigger") && string(current.getValue("trigger")) == "charter_event" &&
-            is_valid(next)    &&    next.getValue("trigger") && string(   next.getValue("trigger")) == "charter_event") {
+        if (is_trigger_item(current, "charter_event") && is_trigger_item(next, "charter_event")) {
 
             // Shift the `next` item down to no longer overlap with `current`
             ripple_one(current, next);
